@@ -1,4 +1,6 @@
 import React from "react";
+// import css from "../styles.module.css";
+
 import { Searchbar } from "./Searchbar/Searchbar";
 import { ImageGallery } from "./ImageGallery/ImageGallery";
 import { ImageGalleryItem } from "./ImageGalleryItem/ImageGalleryItem";
@@ -41,6 +43,7 @@ export class App extends React.Component {
       <Button></Button>
 
       <Loader></Loader>
+      <Modal></Modal>
     </div>
     )
   }

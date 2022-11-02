@@ -1,4 +1,6 @@
 import React from 'react';
+// import css from "";
+
 
 export class Searchbar extends React.Component{
   state = { 
@@ -14,12 +16,12 @@ export class Searchbar extends React.Component{
   }
 
   
-  handleInputChange = event => {
-    console.log(this.state.inputValue)
-    this.setState({
-      [event.target]: event.target
-    })
-  }
+  // handleInputChange = event => {
+  //   console.log(this.state.inputValue)
+  //   this.setState({
+  //     [event.target]: event.target
+  //   })
+  // }
 
   onSubmit = evt => {
     evt.preventDefault();
@@ -30,7 +32,7 @@ export class Searchbar extends React.Component{
   render(){
 
     return(
-      <header>
+      <header className = {Searchbar}>
         <form onSubmit = {this.onSubmit} >
           <button type="submit">
             <span>Search</span>
