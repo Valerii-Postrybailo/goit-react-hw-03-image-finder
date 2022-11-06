@@ -15,35 +15,51 @@ export class App extends React.Component {
 
   state = {
     pictures : [],
+    loading: false,
   }
 
-  async componentDidMount(){
-    const url = `${BACK_END_URL}/?key=${API_KEY}&q=cat&image_type=photo&orientation=horizontal&safesearch=true&per_page=12&page=1`
+  async foundPicture(inputValue){
+    this.setState({loading: true})
+    const url = `${BACK_END_URL}/?key=${API_KEY}&q=${inputValue}&image_type=photo&orientation=horizontal&safesearch=true&per_page=12&page=1`
     const response = await fetch(url);
     const data = await response.json();
-    console.log(data)
+    // console.log(data)
     this.setState({ pictures: [...data.hits] });
+    this.setState({loading: false})
+  }
+
+  onSubmit = (evt) =>{
+    evt.preventDefault();
+    const data = evt.target.elements.pictureSearch.value
+
+    // console.log(evt.target.elements.pictureSearch.value)
+    this.foundPicture(data)
+    this.setState({[evt.target]: evt.target})
+    // console.log(this.state)
   }
 
   render(){
-    console.log(this.state)
+    // console.log(this.state)
 
     return(
     <div>
-      <Searchbar>
+      <Searchbar
+        onSubmit={this.onSubmit}
+      />
 
-      </Searchbar>
 
       <ImageGallery>
-        <ImageGalleryItem
-          pictures = {this.state.pictures}
-        />
+       
+          <ImageGalleryItem
+            pictures = {this.state.pictures}
+          />
+       
       </ImageGallery> 
 
       <Button></Button>
 
-      <Loader></Loader>
-      <Modal></Modal>
+      {this.state.loading && <Loader/>}
+
     </div>
     )
   }

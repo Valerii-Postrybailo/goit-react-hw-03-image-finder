@@ -1,7 +1,11 @@
-export const Modal = () =>{
-  <div class="overlay">
-    <div class="modal">
-      <img src="" alt="" />
+
+export const Modal = ({children}) =>{
+  return(
+    <div class="overlay">
+        <div class="modal">
+          <img src="" alt="" />
+      </div>
     </div>
-  </div>
+  )
+  
 }

@@ -8,7 +8,9 @@ export class Searchbar extends React.Component{
   }
 
   handleInputChange = evt => {
-    this.setState({[evt.target.name]: evt.target.value})
+    evt.preventDefault();
+    console.log(evt.target.elements.pictureSearch.value)
+    this.setState({[evt.target]: evt.target})
   }
 
   reset = () => {
@@ -33,12 +35,13 @@ export class Searchbar extends React.Component{
 
     return(
       <header className = {Searchbar}>
-        <form onSubmit = {this.onSubmit} >
+        <form onSubmit = {this.props.onSubmit} >
           <button type="submit">
             <span>Search</span>
           </button>
       
           <input
+            name ="pictureSearch"
             type="text"
             autoComplete="off"
             autoFocus
