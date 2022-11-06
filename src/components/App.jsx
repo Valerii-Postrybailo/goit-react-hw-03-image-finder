@@ -1,66 +1,128 @@
 import React from "react";
 // import css from "../styles.module.css";
 
-import { Searchbar } from "./Searchbar/Searchbar";
+import Searchbar from "./Searchbar/Searchbar";
 import { ImageGallery } from "./ImageGallery/ImageGallery";
-import { ImageGalleryItem } from "./ImageGalleryItem/ImageGalleryItem";
 import { Button } from "./Button/Button";
 import { Loader } from "./Loader/Loader";
-import { Modal } from "./Modal/Modal";
+import Modal from "./Modal/Modal";
+import * as API from "../services/pixabay_api";
 
-const BACK_END_URL =  'https://pixabay.com/api/'
-const API_KEY = '29743912-8e7685db13f3781653d214456'
+import {AppWrapper} from "./App.styled"
+
+// const BACK_END_URL = 'https://pixabay.com/api/'
+// const API_KEY = '29743912-8e7685db13f3781653d214456'
 
 export class App extends React.Component {
 
   state = {
-    pictures : [],
-    loading: false,
+    query : "",
+    items: [],
+    page: 1,
+    isLoading: false,
+    showModal: false,
+    currentLargeImageURL: '',
+    error: null,
   }
 
-  async foundPicture(inputValue){
-    this.setState({loading: true})
-    const url = `${BACK_END_URL}/?key=${API_KEY}&q=${inputValue}&image_type=photo&orientation=horizontal&safesearch=true&per_page=12&page=1`
-    const response = await fetch(url);
-    const data = await response.json();
-    // console.log(data)
-    this.setState({ pictures: [...data.hits] });
-    this.setState({loading: false})
+  // async foundPicture(inputValue){
+  //   this.setState({loading: true})
+  //   const url = `${BACK_END_URL}/?key=${API_KEY}&q=${inputValue}&image_type=photo&orientation=horizontal&safesearch=true&per_page=12&page=1`
+  //   const response = await fetch(url);
+  //   const data = await response.json();
+  //   // console.log(data)
+  //   this.setState({ pictures: [...data.hits] });
+  //   this.setState({loading: false})
+  // }
+
+  onOpenLargeImg = (url) => {
+    this.setState({
+      currentLargeImageURL: url,
+    })
   }
 
-  onSubmit = (evt) =>{
-    evt.preventDefault();
-    const data = evt.target.elements.pictureSearch.value
+  toggleModal = () => {
+    this.setState(({showModal}) => ({
+      showModal: !showModal
+    }))
+  }
 
-    // console.log(evt.target.elements.pictureSearch.value)
-    this.foundPicture(data)
-    this.setState({[evt.target]: evt.target})
-    // console.log(this.state)
+  onSubmit = (query) =>{
+    console.log(query)
+    if (query.trim().length === 0) {
+      alert("Please, enter your request")
+      return
+    }
+
+    this.setState({
+      query,
+      page: 1,
+      items: [],
+    })
+  }
+
+  onLoadMoreBtn = () => {
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }))
+  }
+
+
+  addPictures  = async (query, page) => {
+    try {
+      this.setState({
+        isLoading: true,
+      });
+      const images = await API.loadImage(query, page);
+      console.log(query)
+      console.log(images)
+      this.setState(prevState => ({
+        items: [...prevState.items, ...images],
+        isLoading: false,
+      }));
+      if(images.length === 0) {
+        alert("Wrong request. Please, enter another one");
+      }
+    } catch (error) {
+      this.setState({
+        error: error.message,
+      })
+    } finally {
+      this.setState({
+        isLoading: false,
+      });
+    }
+  };
+
+  componentDidUpdate (_, prevState) {
+    if(prevState.page !== this.state.page || prevState.query !== this.state.query) {
+      this.addPictures(this.state.query, this.state.page);
+    }
   }
 
   render(){
-    // console.log(this.state)
-
+    const {items, currentLargeImageURL, isLoading, error } = this.state;
+    console.log(items)
     return(
-    <div>
-      <Searchbar
-        onSubmit={this.onSubmit}
-      />
+      
+      <AppWrapper>
+        <Searchbar
+          onSubmit={this.onSubmit}
+          isLoading={isLoading}
+        />
+        
+        {error && <p>{error}</p>}
 
+        {items.length > 0 && <ImageGallery items={items} onClick={this.onOpenLargeImg}/>}
 
-      <ImageGallery>
-       
-          <ImageGalleryItem
-            pictures = {this.state.pictures}
-          />
-       
-      </ImageGallery> 
+        {isLoading && <Loader/>}
 
-      <Button></Button>
+        {items.length > 0 && <Button onLoadMore={this.onLoadMoreBtn} isLoading={isLoading}/>}
+        {currentLargeImageURL && <Modal closeModal={this.toggleModal} url={currentLargeImageURL}/>}
 
-      {this.state.loading && <Loader/>}
+        {this.state.isLoading && <Loader/>}
 
-    </div>
+      </AppWrapper>
     )
   }
 };
