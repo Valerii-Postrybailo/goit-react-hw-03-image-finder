@@ -1,11 +1,10 @@
 import PropTypes from "prop-types";
 import {GalleryItem, ItemImg} from "./ImageGalleryItem.styled"
 
-export const ImageGalleryItem = ({id, item, onClick}) => {
-  console.log(id)
+export const ImageGalleryItem = ({item, onClick}) => {
   const {webformatURL, tags, largeImageURL} = item;
   return (
-    <GalleryItem key={id}>
+    <GalleryItem>
       <ItemImg
         onClick={() => onClick(largeImageURL)}
         src={webformatURL}
@@ -18,7 +17,7 @@ ImageGalleryItem.propTypes = {
     item: PropTypes.exact({
       id: PropTypes.number,
       webformatURL: PropTypes.string,
-      tag: PropTypes.string,
+      tags: PropTypes.string,
       largeImageURL: PropTypes.string,
     }),
     onClick: PropTypes.func.isRequired,

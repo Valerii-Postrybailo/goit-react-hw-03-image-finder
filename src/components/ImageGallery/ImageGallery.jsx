@@ -6,8 +6,7 @@ export const ImageGallery = ({items, onClick}) => {
   return(
     <Gallery>
       {items.map(item => {
-        return <ImageGalleryItem 
-                  id={item.id} 
+        return <ImageGalleryItem key={item.id}
                   item={item} 
                   onClick={onClick}
                 />})}

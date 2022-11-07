@@ -20,7 +20,6 @@ export class App extends React.Component {
     items: [],
     page: 1,
     isLoading: false,
-    showModal: false,
     currentLargeImageURL: '',
     error: null,
   }
@@ -42,13 +41,13 @@ export class App extends React.Component {
   }
 
   toggleModal = () => {
-    this.setState(({showModal}) => ({
-      showModal: !showModal
+    this.setState(() => ({
+      currentLargeImageURL: "",
     }))
   }
 
   onSubmit = (query) =>{
-    console.log(query)
+    // console.log(query)
     if (query.trim().length === 0) {
       alert("Please, enter your request")
       return
@@ -74,8 +73,8 @@ export class App extends React.Component {
         isLoading: true,
       });
       const images = await API.loadImage(query, page);
-      console.log(query)
-      console.log(images)
+      // console.log(query)
+      // console.log(images)
       this.setState(prevState => ({
         items: [...prevState.items, ...images],
         isLoading: false,
@@ -101,8 +100,7 @@ export class App extends React.Component {
   }
 
   render(){
-    const {items, currentLargeImageURL, isLoading, error } = this.state;
-    console.log(items)
+    const {items, currentLargeImageURL, isLoading, error} = this.state;
     return(
       
       <AppWrapper>
@@ -118,9 +116,9 @@ export class App extends React.Component {
         {isLoading && <Loader/>}
 
         {items.length > 0 && <Button onLoadMore={this.onLoadMoreBtn} isLoading={isLoading}/>}
-        {currentLargeImageURL && <Modal closeModal={this.toggleModal} url={currentLargeImageURL}/>}
+        {currentLargeImageURL && <Modal onClose={this.toggleModal} url={currentLargeImageURL} />}
 
-        {this.state.isLoading && <Loader/>}
+        {/* {this.state.isLoading && <Loader/>} */}
 
       </AppWrapper>
     )

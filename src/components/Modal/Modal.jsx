@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { createPortal } from "react-dom"
 import { ModalOvarlay, ModalWindow} from "./Modal.styled";
 
-const modalReact = document.querySelector("modal-root")
+const modalReact = document.querySelector("#modal-root")
 
 export default class Modal extends Component{
 
@@ -26,12 +26,15 @@ export default class Modal extends Component{
       this.props.onClose()
     }
   }
+  
 
   render(){
     return createPortal(
       <ModalOvarlay onClick = {this.handleBackdropClick}>
-        <ModalWindow>
-          <img src={this.props.url} alt=""/>
+        <ModalWindow >
+          <img src={this.props.url} alt=""
+            style={{width:"900px"}}
+          />
         </ModalWindow>
       </ModalOvarlay>,
       modalReact
@@ -40,6 +43,6 @@ export default class Modal extends Component{
 }
 
 Modal.propTypes = {
-  closeModal: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   url: PropTypes.string.isRequired,
 }
